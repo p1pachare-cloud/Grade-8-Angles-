@@ -19,16 +19,16 @@ export default function AngleLabStation({ onComplete, audioEnabled }) {
   // Part 1: Submit build
   const checkBuiltAngle = () => {
     const diff = Math.abs(builtAngle - targetAngle);
-    if (diff <= 2) {
+    if (diff <= 3) {
       playChime();
-      setFeedback('Spot on! Exactly within tolerance! 🎉');
+      setFeedback('Spot on! Target 135° constructed! 🎉 Advancing to Part 2...');
       setTimeout(() => {
         setFeedback(null);
         setPart(2);
-      }, 1400);
+      }, 1200);
     } else {
       playBuzz();
-      setFeedback(`Not quite — reading is ${builtAngle}°, target is ${targetAngle}°. Adjust the ray!`);
+      setFeedback(`Currently at ${builtAngle}° (${classifyAngle(builtAngle)}), target is ${targetAngle}°. Use the ray or stepper buttons!`);
     }
   };
 
@@ -48,10 +48,13 @@ export default function AngleLabStation({ onComplete, audioEnabled }) {
   const finishPart3 = () => {
     if (selectedRule === 'equal') {
       playChime();
-      onComplete();
+      setFeedback('Station A Mastered! 🎉 Transitioning to Station B...');
+      setTimeout(() => {
+        onComplete();
+      }, 900);
     } else {
       playBuzz();
-      setFeedback('Check again: What is always true about opposite angles?');
+      setFeedback('Check again: What is always true about vertically opposite angles?');
     }
   };
 
@@ -72,11 +75,17 @@ export default function AngleLabStation({ onComplete, audioEnabled }) {
           <div className="station-control-panel">
             <h4 style={{ color: '#ffd54f' }}>Part 1: Build the Target Angle</h4>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-              Drag the golden ray on the protractor to construct an angle of exactly{' '}
+              Drag the golden ray or use the stepper buttons to construct an angle of exactly{' '}
               <strong style={{ color: '#00e5ff', fontSize: '1.2rem' }}>{targetAngle}°</strong>.
             </p>
-            <div className="angle-classification-pill">
-              <span>Type: {classifyAngle(builtAngle).toUpperCase()}</span>
+
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 10 }}>
+              <div className="angle-classification-pill" style={{ borderColor: '#ffd54f', color: '#ffd54f' }}>
+                <span>Target: {targetAngle}° (OBTUSE)</span>
+              </div>
+              <div className="angle-classification-pill">
+                <span>Reading: {builtAngle}° ({classifyAngle(builtAngle).toUpperCase()})</span>
+              </div>
             </div>
 
             <button className="btn btn-primary" onClick={checkBuiltAngle} style={{ marginTop: 20 }}>
@@ -84,7 +93,7 @@ export default function AngleLabStation({ onComplete, audioEnabled }) {
               <span>Verify Angle ({builtAngle}°)</span>
             </button>
 
-            {feedback && <div className="feedback-hint-box">{feedback}</div>}
+            {feedback && <div className="feedback-hint-box" style={{ marginTop: 14 }}>{feedback}</div>}
           </div>
 
           <div className="station-visual-stage">

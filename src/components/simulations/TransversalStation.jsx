@@ -44,13 +44,13 @@ export default function TransversalStation({ onComplete, audioEnabled, onRecordE
   };
 
   const checkPickEqual = () => {
-    const isCorrect =
-      expectedEqual.every((id) => selected.includes(id)) &&
-      selected.length === expectedEqual.length;
+    const hasAll = expectedEqual.every((id) => selected.includes(id));
+    const noInvalid = selected.every((id) => id === targetEqual || expectedEqual.includes(id));
+    const isCorrect = hasAll && noInvalid;
 
     if (isCorrect) {
       playChime();
-      setFeedback('Brilliant! You identified all equal angle pairs! 🎉');
+      setFeedback('Brilliant! You identified all equal angle pairs! 🎉 Advancing to Step 3...');
       setTimeout(() => {
         setFeedback(null);
         setSelected([]);
@@ -60,18 +60,18 @@ export default function TransversalStation({ onComplete, audioEnabled, onRecordE
       playBuzz();
       setErrors((prev) => prev + 1);
       if (onRecordError) onRecordError();
-      setFeedback('Not quite all matching angles. Remember: vertically opposite, alternate, and corresponding angles are equal!');
+      setFeedback('Remember: vertically opposite (T.LL), alternate (B.LL), and corresponding (B.UR) angles are equal!');
     }
   };
 
   const checkPickSupplementary = () => {
-    const isCorrect =
-      expectedSupp.every((id) => selected.includes(id)) &&
-      selected.length === expectedSupp.length;
+    const hasAll = expectedSupp.every((id) => selected.includes(id));
+    const noInvalid = selected.every((id) => expectedSupp.includes(id));
+    const isCorrect = hasAll && noInvalid;
 
     if (isCorrect) {
       playChime();
-      setFeedback('Awesome! All supplementary angles add to 180°! 🚀');
+      setFeedback('Awesome! All supplementary angles sum to 180°! 🚀 Advancing to Step 4...');
       setTimeout(() => {
         setFeedback(null);
         setSelected([]);
@@ -81,14 +81,17 @@ export default function TransversalStation({ onComplete, audioEnabled, onRecordE
       playBuzz();
       setErrors((prev) => prev + 1);
       if (onRecordError) onRecordError();
-      setFeedback('Look for angles that form a linear straight pair (180°) or co-interior inside the lines!');
+      setFeedback('Look for angles that form a linear pair (180°) or co-interior angles inside the parallel lines!');
     }
   };
 
   const checkConverse = () => {
     if (converseAnswer === 'yes') {
       playChime();
-      onComplete(errors === 0);
+      setFeedback('Station B Mastered! 🎉 Transitioning to Station C (Sum Lab)...');
+      setTimeout(() => {
+        onComplete(errors === 0);
+      }, 900);
     } else {
       playBuzz();
       setFeedback('Check again: if corresponding angles are equal (65° = 65°), the lines MUST be parallel!');

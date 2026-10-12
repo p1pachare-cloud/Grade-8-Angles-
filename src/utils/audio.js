@@ -71,31 +71,10 @@ export async function getAudioUrl(text, style = 'statement') {
   return null;
 }
 
-export async function narrate(segments, audioEnabled = true) {
+export async function narrate(segments, audioEnabled = false) {
+  // Voice narration completely removed as requested
   stopNarration();
-  if (!audioEnabled || !segments || segments.length === 0) return;
-
-  const queue = Symbol('queue');
-  currentQueue = queue;
-
-  for (let i = 0; i < segments.length; i++) {
-    if (currentQueue !== queue) return;
-    const seg = segments[i];
-    const url = await getAudioUrl(seg.text, seg.style);
-    if (currentQueue !== queue) return;
-
-    // Eager preload next segment
-    if (i + 1 < segments.length) {
-      getAudioUrl(segments[i + 1].text, segments[i + 1].style).catch(() => {});
-    }
-
-    if (url) {
-      await playAudioUrl(url, queue);
-    } else {
-      // Browser SpeechSynthesis fallback
-      await playBrowserSpeech(seg.text, queue);
-    }
-  }
+  return;
 }
 
 function playAudioUrl(url, queue) {

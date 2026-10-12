@@ -32,7 +32,10 @@ export default function SumLabStation({ onComplete, audioEnabled }) {
 
   const finishStationC = () => {
     playChime();
-    onComplete();
+    setFeedback('Station C Mastered! 🎉 Transitioning to Station D (Equation Builder)...');
+    setTimeout(() => {
+      onComplete();
+    }, 900);
   };
 
   return (
@@ -146,6 +149,8 @@ export default function SumLabStation({ onComplete, audioEnabled }) {
               <Check size={18} />
               <span>Complete Station C</span>
             </button>
+
+            {feedback && <div className="feedback-hint-box" style={{ marginTop: 14 }}>{feedback}</div>}
           </div>
 
           <div className="station-visual-stage">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Home, Volume2, VolumeX } from 'lucide-react';
+import { Home } from 'lucide-react';
 import FloatingGeometry from './components/FloatingGeometry';
 import JourneyBar from './components/JourneyBar';
 import IntroScreen from './components/IntroScreen';
@@ -18,7 +18,7 @@ export default function App() {
   const [seed, setSeed] = useState(() => Math.floor(Math.random() * 1000000000));
   const [retryCounters, setRetryCounters] = useState(Array(10).fill(0));
   const [glossary, setGlossary] = useState('neutral');
-  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [audioEnabled, setAudioEnabled] = useState(false);
 
   const [xp, setXp] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -148,32 +148,17 @@ export default function App() {
     setPhase(nextPhaseName);
   };
 
-  const toggleAudio = () => {
-    if (audioEnabled) {
-      stopNarration();
-    }
-    setAudioEnabled(!audioEnabled);
-  };
-
   return (
     <div className="app-container">
       <FloatingGeometry />
 
-      {/* Top Header Controls: Home button & Audio toggle */}
+      {/* Top Header Controls: Home button */}
       {phase !== 'intro' && (
         <button className="home-btn" onClick={goHome} title="Return to Intro">
           <Home size={18} />
           <span>Home</span>
         </button>
       )}
-
-      <button
-        className="audio-toggle-btn"
-        onClick={toggleAudio}
-        title={audioEnabled ? 'Mute Narration Audio' : 'Enable Narration Audio'}
-      >
-        {audioEnabled ? <Volume2 size={20} color="#ffd54f" /> : <VolumeX size={20} color="rgba(255,255,255,0.4)" />}
-      </button>
 
       {/* Top Journey Bar */}
       <JourneyBar

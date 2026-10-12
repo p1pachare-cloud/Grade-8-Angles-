@@ -38,11 +38,16 @@ export default function TransversalDiagram({
     (e) => {
       if (!onChangeTheta || !svgRef.current) return;
       const rect = svgRef.current.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
 
-      const px = clientX - rect.left;
-      const py = clientY - rect.top;
+      if (!rect.width || !rect.height) return;
+
+      const scaleX = width / rect.width;
+      const scaleY = height / rect.height;
+
+      const px = (clientX - rect.left) * scaleX;
+      const py = (clientY - rect.top) * scaleY;
 
       // Calculate angle of transversal through center (cx, (topY+botY)/2)
       const cyCenter = (topY + botY) / 2;
@@ -54,7 +59,7 @@ export default function TransversalDiagram({
       if (deg > 150) deg = 150;
       onChangeTheta(deg);
     },
-    [cx, onChangeTheta, topY, botY]
+    [cx, onChangeTheta, topY, botY, width, height]
   );
 
   useEffect(() => {

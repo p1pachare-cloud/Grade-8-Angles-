@@ -21,6 +21,11 @@ export default function EquationBuilderStation({ onComplete, audioEnabled }) {
     }
   };
 
+  const handleRemoveChip = (index) => {
+    playClick();
+    setTrayChips(trayChips.filter((_, i) => i !== index));
+  };
+
   const handleClearTray = () => {
     playClick();
     setTrayChips([]);
@@ -38,7 +43,6 @@ export default function EquationBuilderStation({ onComplete, audioEnabled }) {
   };
 
   const checkEquation = () => {
-    const eq = trayChips.join(' ');
     // Valid: (3x + 15) + (2x + 25) = 180 or reversed
     if (
       (trayChips[0] === '(3x + 15)' && trayChips[1] === '+' && trayChips[2] === '(2x + 25)' && trayChips[3] === '=' && trayChips[4] === '180') ||
@@ -49,17 +53,20 @@ export default function EquationBuilderStation({ onComplete, audioEnabled }) {
       setFeedback(null);
     } else {
       playBuzz();
-      setFeedback('Equation should add the two angle expressions and equate to 180.');
+      setFeedback('Equation should add the two angle expressions and equate to 180 (e.g. (3x + 15) + (2x + 25) = 180).');
     }
   };
 
   const checkSolve = (val) => {
     if (String(val).trim() === '28') {
       playChime();
-      onComplete();
+      setFeedback('Station D Mastered! 🎉 All simulation stations complete! Advancing to Practice Phase...');
+      setTimeout(() => {
+        onComplete();
+      }, 900);
     } else {
       playBuzz();
-      setFeedback('5x + 40 = 180 → 5x = 140 → x = 140 ÷ 5 = 28.');
+      setFeedback('Solve 5x + 40 = 180 → 5x = 140 → x = 140 ÷ 5 = 28.');
     }
   };
 
@@ -132,8 +139,14 @@ export default function EquationBuilderStation({ onComplete, audioEnabled }) {
                   </span>
                 ) : (
                   trayChips.map((c, i) => (
-                    <span key={i} className="tray-chip-item">
-                      {c}
+                    <span
+                      key={i}
+                      className="tray-chip-item"
+                      onClick={() => handleRemoveChip(i)}
+                      title="Click chip to remove"
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {c} <span style={{ fontSize: '0.75rem', opacity: 0.6, marginLeft: 2 }}>×</span>
                     </span>
                   ))
                 )}

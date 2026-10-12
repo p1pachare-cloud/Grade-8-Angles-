@@ -22,15 +22,25 @@ export default function Protractor({
     (e) => {
       if (readOnly || !onChange || !svgRef.current) return;
       const rect = svgRef.current.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      const clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
 
-      const x = clientX - rect.left - cx;
-      const y = cy - (clientY - rect.top);
+      if (!rect.width || !rect.height) return;
+
+      const scaleX = width / rect.width;
+      const scaleY = height / rect.height;
+
+      const svgX = (clientX - rect.left) * scaleX;
+      const svgY = (clientY - rect.top) * scaleY;
+
+      const x = svgX - cx;
+      const y = cy - svgY;
 
       let rad = Math.atan2(y, x);
       let deg = Math.round((rad * 180) / Math.PI);
-      if (deg < 0) deg = 0;
+      if (deg < 0) {
+        deg = x >= 0 ? 0 : 180;
+      }
       if (deg > 180) deg = 180;
 
       if (snap) {
@@ -38,7 +48,7 @@ export default function Protractor({
       }
       onChange(deg);
     },
-    [cx, cy, onChange, readOnly, snap, step]
+    [cx, cy, height, onChange, readOnly, snap, step, width]
   );
 
   const onPointerDown = (e) => {
@@ -56,7 +66,7 @@ export default function Protractor({
     if (isDragging) {
       window.addEventListener('pointermove', handleMove);
       window.addEventListener('pointerup', handleUp);
-      window.addEventListener('touchmove', handleMove);
+      window.addEventListener('touchmove', handleMove, { passive: false });
       window.addEventListener('touchend', handleUp);
     }
     return () => {
@@ -67,19 +77,25 @@ export default function Protractor({
     };
   }, [isDragging, handlePointer]);
 
-  // Current movable arm endpoint
-  const rayPt = polarToCartesian(cx, cy, radius, -angle);
-  const targetPt = targetAngle !== null ? polarToCartesian(cx, cy, radius, -targetAngle) : null;
+  const adjustAngle = (delta) => {
+    if (readOnly || !onChange) return;
+    const next = Math.max(0, Math.min(180, angle + delta));
+    onChange(next);
+  };
+
+  // Current movable arm endpoint (positive angle points upward into protractor dome)
+  const rayPt = polarToCartesian(cx, cy, radius, angle);
+  const targetPt = targetAngle !== null ? polarToCartesian(cx, cy, radius, targetAngle) : null;
 
   return (
-    <div className="protractor-container" style={{ width, height }}>
+    <div className="protractor-container" style={{ width: '100%', maxWidth: width, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <svg
         ref={svgRef}
         viewBox={`0 0 ${width} ${height}`}
         width="100%"
-        height="100%"
+        height={height}
         onPointerDown={onPointerDown}
-        style={{ cursor: readOnly ? 'default' : 'pointer', touchAction: 'none' }}
+        style={{ cursor: readOnly ? 'default' : 'pointer', touchAction: 'none', display: 'block' }}
       >
         <defs>
           <linearGradient id="protractorBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -107,9 +123,9 @@ export default function Protractor({
         {/* Degree Ticks (Every 10° and 5°) */}
         {Array.from({ length: 19 }).map((_, i) => {
           const deg = i * 10;
-          const outer = polarToCartesian(cx, cy, radius, -deg);
-          const inner = polarToCartesian(cx, cy, radius - (deg % 30 === 0 ? 14 : 8), -deg);
-          const labelPt = polarToCartesian(cx, cy, radius - 24, -deg);
+          const outer = polarToCartesian(cx, cy, radius, deg);
+          const inner = polarToCartesian(cx, cy, radius - (deg % 30 === 0 ? 14 : 8), deg);
+          const labelPt = polarToCartesian(cx, cy, radius - 24, deg);
 
           return (
             <g key={i}>
@@ -189,11 +205,55 @@ export default function Protractor({
         <circle cx={cx} cy={cy} r="5" fill="#ffffff" stroke="#3f51b5" strokeWidth="2" />
       </svg>
 
-      {/* Live Readout Badge */}
-      <div className="protractor-readout-badge">
-        <span style={{ color: '#ffd54f', fontWeight: 800, fontSize: '1.2rem' }}>
-          {angle}°
-        </span>
+      {/* Live Readout Badge & Fine Controls */}
+      <div className="protractor-readout-badge" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, marginTop: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ color: '#ffd54f', fontWeight: 800, fontSize: '1.25rem' }}>
+            {angle}°
+          </span>
+          {targetAngle !== null && (
+            <span style={{ fontSize: '0.85rem', color: Math.abs(angle - targetAngle) <= 2 ? '#00e676' : 'rgba(255,255,255,0.6)' }}>
+              (Target: {targetAngle}°)
+            </span>
+          )}
+        </div>
+
+        {!readOnly && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+            <button
+              type="button"
+              onClick={() => adjustAngle(-5)}
+              title="-5 degrees"
+              style={{ padding: '3px 8px', fontSize: '0.78rem', fontWeight: 'bold', borderRadius: 6, background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', color: '#fff', cursor: 'pointer' }}
+            >
+              −5°
+            </button>
+            <button
+              type="button"
+              onClick={() => adjustAngle(-1)}
+              title="-1 degree"
+              style={{ padding: '3px 8px', fontSize: '0.78rem', fontWeight: 'bold', borderRadius: 6, background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', color: '#fff', cursor: 'pointer' }}
+            >
+              −1°
+            </button>
+            <button
+              type="button"
+              onClick={() => adjustAngle(1)}
+              title="+1 degree"
+              style={{ padding: '3px 8px', fontSize: '0.78rem', fontWeight: 'bold', borderRadius: 6, background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', color: '#fff', cursor: 'pointer' }}
+            >
+              +1°
+            </button>
+            <button
+              type="button"
+              onClick={() => adjustAngle(5)}
+              title="+5 degrees"
+              style={{ padding: '3px 8px', fontSize: '0.78rem', fontWeight: 'bold', borderRadius: 6, background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', color: '#fff', cursor: 'pointer' }}
+            >
+              +5°
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
