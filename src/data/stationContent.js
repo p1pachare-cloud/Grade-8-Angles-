@@ -1,0 +1,38 @@
+export const STATIONS = [
+  {
+    id: 'station_a',
+    index: 0,
+    name: 'Angle Lab',
+    tag: 'Station A · Concrete',
+    icon: '📐',
+    desc: 'Protractor measuring, angle classifications, and crossing ray relationships.',
+    instruction: 'Drag the ray to build the angle. Watch the protractor and stop when it matches the target!',
+  },
+  {
+    id: 'station_b',
+    index: 1,
+    name: 'Transversal Explorer',
+    tag: 'Station B · Parallel Lines',
+    icon: '⚡',
+    desc: 'Parallel lines cut by a transversal: alternate, corresponding, and co-interior angles.',
+    instruction: 'Drag the crossing line and watch the angles. Which ones always stay equal?',
+  },
+  {
+    id: 'station_c',
+    index: 2,
+    name: 'Sum Lab',
+    tag: 'Station C · Triangles & Polygons',
+    icon: '🔺',
+    desc: 'Tear triangle corners into a 180° straight line and slice polygons into triangles.',
+    instruction: 'Tear off the corners of the triangle and line them up. What do you notice about the total?',
+  },
+  {
+    id: 'station_d',
+    index: 3,
+    name: 'Equation Builder',
+    tag: 'Station D · Algebraic Proofs',
+    icon: '⚖️',
+    desc: 'Form algebraic equations from geometric diagrams, solve for x, and justify steps.',
+    instruction: 'Choose the rule, build the equation, then solve for x.',
+  },
+];

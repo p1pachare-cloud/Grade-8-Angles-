@@ -1,0 +1,62 @@
+export const WONDER = [
+  "Liam is repairing a model bridge. Two beams cross each other, and one angle measures one hundred and ten degrees.",
+  "Without a protractor, can you figure out the other three angles?",
+  "Let's discover the secret rules of angles!",
+];
+
+export const STORY_PANELS = [
+  {
+    id: 1,
+    title: 'The Call',
+    location: 'Singapore · Global Video Call',
+    character: 'Wei',
+    image: '/assets/images/story/story_panel_1.jpg',
+    visualType: 'worldMap',
+    narrative: 'Wei in Singapore starts a video call. John, Mike, Sarah, Emma, Liam, Sofia, Noah, Aisha, Carlos, and Yuki all join. The World Youth Skyline Festival opens in three days, and ten landmark models need fixing.',
+  },
+  {
+    id: 2,
+    title: 'The Storm',
+    location: 'Global Blueprint Studio',
+    character: 'Vertex & Team',
+    image: '/assets/images/story/story_panel_2.jpg',
+    visualType: 'stormSwirl',
+    narrative: 'Storm Zigzag has bent the beams of every model. Vertex the robot beeps. Only perfect angles can make the landmarks stand tall again!',
+  },
+  {
+    id: 3,
+    title: "Sarah's Sails",
+    location: 'Sydney, Australia',
+    character: 'Sarah',
+    image: '/assets/images/story/story_panel_3.jpg',
+    visualType: 'operaSails',
+    narrative: 'Sarah in Sydney is rebuilding the Opera House. Two sails cross at the top, and one angle is sixty-five degrees. She spots a pattern. The angle opposite is exactly the same!',
+  },
+  {
+    id: 4,
+    title: "Yuki's Crossing",
+    location: 'Tokyo, Japan',
+    character: 'Yuki',
+    image: '/assets/images/story/story_panel_4.jpg',
+    visualType: 'tokyoCrossing',
+    narrative: 'Yuki in Tokyo points at the busy crossing. Two straight roads run side by side, and a third road cuts across both. She notices that the angles at the two junctions match, like copies of each other.',
+  },
+  {
+    id: 5,
+    title: "Aisha's Tower",
+    location: 'Dubai, UAE',
+    character: 'Aisha',
+    image: '/assets/images/story/story_panel_5.jpg',
+    visualType: 'dubaiTower',
+    narrative: 'Aisha in Dubai checks the tower frame. Three angles make a triangle. She adds them up: the total is always one hundred and eighty degrees, no matter how the triangle is shaped.',
+  },
+  {
+    id: 6,
+    title: 'The Mission',
+    location: 'World Skyline Festival',
+    character: 'Vertex the Robot',
+    image: '/assets/images/story/story_panel_6.jpg',
+    visualType: 'angleTools',
+    narrative: 'Vertex hands each architect an Angle Tool. Ten landmarks, ten skills. Together they can restore every angle and open the festival on time!',
+  },
+];
